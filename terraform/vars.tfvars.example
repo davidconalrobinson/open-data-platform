@@ -1,0 +1,31 @@
+# DigitalOcean
+digital_ocean_token = "digital-ocean-api-token"
+
+# Cluster
+cluster_name = "data-platform-cluster"
+cluster_region = "ams3"
+cluster_version = "1.28.2-do.0"
+node_size = "s-4vcpu-8gb"
+min_nodes = 1
+max_nodes = 3
+
+# Ingress vars
+ingress_namespace = "ingress"
+host = "my.domain"
+lets_encrypt_email = "email@my.domain"
+lets_encrypt_environment = "staging"
+
+# IAM vars
+iam_namespace = "iam"
+keycloak_admin_password = "password"
+keycloak_postgresql_password = "password"
+openldap_admin_password = "password"
+openldap_config_password = "password"
+openldap_readonly_password = "password"
+
+# Data platform vars
+instances = [
+    "default"
+]
+clickhouse_username = "default"
+clickhouse_password = "password"
