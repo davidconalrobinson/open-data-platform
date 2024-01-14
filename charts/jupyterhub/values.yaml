@@ -1,0 +1,40 @@
+# Default values for jupyterhub.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#
+# For a complete list of parameters that can be set from this file refer to:
+# https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/3.2.1/jupyterhub/values.yaml
+hub:
+  baseUrl: /jupyterhub
+  image:
+    tag: "3.2.1"
+proxy:
+  service:
+    type: ClusterIP
+  secretSync:
+    image:
+      tag: "3.2.1"
+singleuser:
+  networkTools:
+    image:
+      tag: "3.2.1"
+  networkPolicy:
+    egress:
+      - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: clickhouse
+              app.kubernetes.io/instance: clickhouse
+              app.kubernetes.io/name: clickhouse
+    egressAllowRules:
+      privateIPs: true
+  image:
+    name: quay.io/jupyterhub/k8s-singleuser-sample
+    tag: "3.2.1"
+ingress:
+  enabled: true
+  annotations: 
+    cert-manager.io/issuer: "<this value is overriden by terraform/helm_releases.tf>"
+  ingressClassName: nginx
+  tls:
+    - secretName: "<this value is overriden by terraform/helm_releases.tf>"

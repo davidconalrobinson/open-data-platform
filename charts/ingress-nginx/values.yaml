@@ -1,0 +1,13 @@
+# Default values for ingress-nginx.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#
+# For a complete list of parameters that can be set from this file refer to:
+# https://github.com/kubernetes/ingress-nginx/blob/release-1.9/charts/ingress-nginx/values.yaml
+controller:
+  config:
+    use-proxy-protocol: "true"
+  service:
+    annotations:
+      service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: true
+      service.beta.kubernetes.io/do-loadbalancer-name: ingress-nginx-load-balancer

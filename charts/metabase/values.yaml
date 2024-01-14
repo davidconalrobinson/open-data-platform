@@ -1,0 +1,54 @@
+# Default values for metabase.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#
+# For a complete list of parameters that can be set from this file refer to:
+# https://github.com/pmint93/helm-charts/blob/metabase-2.10.4/charts/metabase/values.yaml
+pluginsDirectory: /plugins
+siteUrl: "<this value is overriden by terraform/helm_releases.tf>"
+extraInitContainers:
+  - name: download-modules
+    image: "curlimages/curl:7.70.0"
+    imagePullPolicy: "IfNotPresent"
+    volumeMounts:
+      - name: plugins
+        mountPath: /plugins
+    workingDir: /plugins
+    command:
+      - "/bin/sh"
+      - "-ec"
+      - |
+        curl -Lso /plugins/clickhouse.metabase-driver.jar \
+        https://github.com/ClickHouse/metabase-clickhouse-driver/releases/download/1.2.2/clickhouse.metabase-driver.jar
+extraVolumeMounts:
+  - name: plugins
+    mountPath: /plugins
+    readOnly: false
+extraVolumes:
+  - name: plugins
+    emptyDir: {}
+livenessProbe:
+  initialDelaySeconds: 200
+readinessProbe:
+  initialDelaySeconds: 100
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts: <this value is overriden by terraform/helm_releases.tf>
+  path: /metabase(/|$)(.*)
+  pathType: ImplementationSpecific
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/cluster-issuer: <this value is overriden by terraform/helm_releases.tf>
+    kubernetes.io/ingress.class: "nginx"
+  tls:
+    - secretName: <this value is overriden by terraform/helm_releases.tf>
+      hosts: <this value is overriden by terraform/helm_releases.tf>
+resources:
+  requests:
+    memory: "1Gi"
+    cpu: "0.5"
+  limits:
+    memory: "2Gi"
+    cpu: "1"

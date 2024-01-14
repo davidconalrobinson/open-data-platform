@@ -1,0 +1,5 @@
+name: cert-issuer
+apiVersion: v2
+description: cert-issuer
+version: 0.0.1
+kubeVersion: ">=1.10.0"
