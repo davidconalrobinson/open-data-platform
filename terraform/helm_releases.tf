@@ -152,11 +152,10 @@ resource "helm_release" "keycloak" {
 
 # https://github.com/bitnami/charts/tree/5687b241a2daa04df4b38f8e4d7dd110c64f5c7c/bitnami/clickhouse
 resource "helm_release" "clickhouse" {
-  for_each         = toset(var.instances)
   name             = "clickhouse"
   chart            = "oci://registry-1.docker.io/bitnamicharts/clickhouse"
   version          = "4.1.16"
-  namespace        = each.value
+  namespace        = var.platform_namespace
   create_namespace = true
   lint             = true
   timeout          = 600
@@ -179,25 +178,25 @@ resource "helm_release" "clickhouse" {
 
 # https://github.com/apache/airflow/tree/helm-chart/1.11.0/chart
 resource "helm_release" "airflow" {
-  for_each         = toset(var.instances)
   name             = "airflow"
   chart            = "airflow"
   repository       = "https://airflow.apache.org"
   version          = "1.11.0"
-  namespace        = each.value
+  namespace        = var.platform_namespace
   create_namespace = true
   lint             = true
   timeout          = 600
+  wait             = false
   values           = [
     "${file("../charts/airflow/values.yaml")}"
   ]
   set {
     name  = "ingress.web.hosts[0].name"
-    value = "${each.value}.${var.host}"
+    value = "${var.platform_namespace}.${var.host}"
   }
   set {
     name  = "config.webserver.base_url"
-    value = "https://${each.value}.${var.host}/airflow"
+    value = "https://${var.platform_namespace}.${var.host}/airflow"
   }
   set {
     name  = "ingress.web.annotations.cert-manager\\.io/cluster-issuer"
@@ -215,12 +214,11 @@ resource "helm_release" "airflow" {
 
 # https://github.com/pmint93/helm-charts/tree/metabase-2.10.4
 resource "helm_release" "metabase" {
-  for_each         = toset(var.instances)
   name             = "metabase"
   chart            = "metabase"
   repository       = "https://pmint93.github.io/helm-charts"
   version          = "2.10.4"
-  namespace        = each.value
+  namespace        = var.platform_namespace
   create_namespace = true
   lint             = true
   timeout          = 600
@@ -229,15 +227,15 @@ resource "helm_release" "metabase" {
   ]
   set {
     name  = "siteUrl"
-    value = "https://${each.value}.${var.host}"
+    value = "https://${var.platform_namespace}.${var.host}"
   }
   set {
     name  = "ingress.hosts"
-    value = "{${each.value}.${var.host}}"
+    value = "{${var.platform_namespace}.${var.host}}"
   }
   set {
     name  = "ingress.tls[0].hosts"
-    value = "{${each.value}.${var.host}}"
+    value = "{${var.platform_namespace}.${var.host}}"
   }
   set {
     name  = "ingress.annotations.cert-manager\\.io/cluster-issuer"
@@ -255,12 +253,11 @@ resource "helm_release" "metabase" {
 
 # https://github.com/jupyterhub/zero-to-jupyterhub-k8s/tree/3.2.1/jupyterhub
 resource "helm_release" "jupyterhub" {
-  for_each         = toset(var.instances)
   name             = "jupyterhub"
   chart            = "jupyterhub"
   repository       = "https://hub.jupyter.org/helm-chart/"
   version          = "3.2.1"
-  namespace        = each.value
+  namespace        = var.platform_namespace
   create_namespace = true
   lint             = true
   timeout          = 600
@@ -269,7 +266,7 @@ resource "helm_release" "jupyterhub" {
   ]
   set {
     name  = "ingress.hosts"
-    value = "{${each.value}.${var.host}}"
+    value = "{${var.platform_namespace}.${var.host}}"
   }
   set {
     name  = "ingress.annotations.cert-manager\\.io/cluster-issuer"

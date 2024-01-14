@@ -24,8 +24,6 @@ openldap_config_password = "password"
 openldap_readonly_password = "password"
 
 # Data platform vars
-instances = [
-    "default"
-]
+platform_namespace = "default"
 clickhouse_username = "default"
 clickhouse_password = "password"

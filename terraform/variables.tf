@@ -62,10 +62,10 @@ variable iam_namespace {
   default     = "iam"
 }
 
-variable instances {
-  description = "List of data-platform instances to be created (e.g: [\"instance-0\", \"instance-1\"])"
-  type        = list(string)
-  default     = ["default"]
+variable platform_namespace {
+  description = "Namespace used for deploying data platform resources"
+  type        = string
+  default     = "default"
 }
 
 variable host {

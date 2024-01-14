@@ -17,17 +17,3 @@ ingress:
           enabled: true
           secretName: "<this value is overriden by terraform/helm_releases.tf>"
     ingressClassName: "nginx"
-  waitForMigrations:
-    enabled: false
-scheduler:
-  waitForMigrations:
-    enabled: false
-webserver:
-  waitForMigrations:
-    enabled: false
-triggerer:
-  waitForMigrations:
-    enabled: false
-dagProcessor:
-  waitForMigrations:
-    enabled: false

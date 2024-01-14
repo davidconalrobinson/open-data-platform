@@ -1,5 +1,5 @@
 resource "digitalocean_record" "dns_record" {
-  for_each = toset(concat([var.ingress_namespace], [var.iam_namespace], var.instances))
+  for_each = toset(concat([var.ingress_namespace], [var.iam_namespace], [var.platform_namespace]))
   domain   = digitalocean_domain.domain.id
   type     = "A"
   name     = each.value
