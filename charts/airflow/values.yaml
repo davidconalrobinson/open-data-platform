@@ -17,3 +17,56 @@ ingress:
           enabled: true
           secretName: "<this value is overriden by terraform/helm_releases.tf>"
     ingressClassName: "nginx"
+config:
+  webserver:
+    authenticate: True
+    auth_backend: airflow.contrib.auth.backends.github_enterprise_auth
+  github_enterprise:
+    host: github.com
+    client_id: "<this value is overriden by terraform/helm_releases.tf>"
+    client_secret: "<this value is overriden by terraform/helm_releases.tf>"
+    oauth_callback_route: /oauth/callback
+webserver:
+  defaultUser:
+    enabled: false
+  webserverConfig: |
+    from airflow.configuration import conf
+    from airflow.www.security import AirflowSecurityManager
+    from flask_appbuilder.security.manager import AUTH_OAUTH
+    import os
+
+
+    AUTH_TYPE = AUTH_OAUTH
+    AUTH_ROLES_SYNC_AT_LOGIN = True  # Checks roles on every login
+    AUTH_USER_REGISTRATION = True  # allow users who are not already in the FAB DB to register
+    AUTH_ROLES_MAPPING = {
+        "Viewer": ["Viewer"],
+        "Admin": ["Admin"],
+    }
+    OAUTH_PROVIDERS = [
+        {
+            "name": "github",
+            "icon": "fa-github",
+            "token_key": "access_token",
+            "remote_app": {
+                "client_id": conf.get("github_enterprise", "client_id"),
+                "client_secret": conf.get("github_enterprise", "client_secret"),
+                "api_base_url": "https://api.github.com",
+                "client_kwargs": {"scope": "read:user, read:org"},
+                "access_token_url": "https://github.com/login/oauth/access_token",
+                "authorize_url": "https://github.com/login/oauth/authorize",
+                "request_token_url": None,
+            },
+        },
+    ]
+
+
+    class GithubAuthoriser(AirflowSecurityManager):
+        def get_oauth_user_info(self, provider, resp):
+            remote_app = self.appbuilder.sm.oauth_remotes[provider]
+            me = remote_app.get("user")
+            user_data = me.json()
+            return {"username": "github_" + user_data.get("login"), "role_keys": ["Admin"]}
+
+
+    SECURITY_MANAGER_CLASS = GithubAuthoriser
