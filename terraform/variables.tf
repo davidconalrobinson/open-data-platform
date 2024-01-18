@@ -62,6 +62,16 @@ variable iam_namespace {
   default     = "iam"
 }
 
+variable github_oauth_client_id_airflow {
+  description = "Client ID for github OAuth app used for airflow authentication"
+  type        = string
+}
+
+variable github_oauth_client_secret_airflow {
+  description = "Client secret for github OAuth app used for airflow authentication"
+  type        = string
+}
+
 variable platform_namespace {
   description = "Namespace used for deploying data platform resources"
   type        = string
@@ -71,36 +81,6 @@ variable platform_namespace {
 variable host {
   description = "Domain used for hosting data platform (e.g: my.domain.com)"
   type        = string
-}
-
-variable openldap_admin_password {
-  description = "OpenLDAP admin user password"
-  type        = string
-  sensitive   = true
-}
-
-variable openldap_config_password {
-  description = "OpenLDAP config password"
-  type        = string
-  sensitive   = true
-}
-
-variable openldap_readonly_password {
-  description = "OpenLDAP readonly user password"
-  type        = string
-  sensitive   = true
-}
-
-variable keycloak_admin_password {
-  description = "Keycloak admin user password"
-  type        = string
-  sensitive   = true
-}
-
-variable keycloak_postgresql_password {
-  description = "Keycloak postgresql password"
-  type        = string
-  sensitive   = true
 }
 
 variable clickhouse_username {

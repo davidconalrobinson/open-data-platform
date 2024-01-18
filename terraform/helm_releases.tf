@@ -61,95 +61,6 @@ resource "helm_release" "cert_issuer" {
   ]
 }
 
-# https://github.com/jp-gouin/helm-openldap/tree/v3.0.2
-resource "helm_release" "openldap" {
-  name             = "openldap"
-  chart            = "openldap-stack-ha"
-  repository       = "https://jp-gouin.github.io/helm-openldap/"
-  version          = "3.0.2"
-  namespace        = var.iam_namespace
-  create_namespace = true
-  lint             = true
-  timeout          = 600
-  values           = [
-    "${file("../charts/openldap/values.yaml")}"
-  ]
-  set {
-    name  = "global.ldapDomain"
-    value = "${var.iam_namespace}.${var.host}"
-  }
-  set {
-    name  = "env.LDAP_DOMAIN"
-    value = "${var.iam_namespace}.${var.host}"
-  }
-  set {
-    name  = "customLdifFiles.initial-ous\\.ldif"
-    value = <<-EOT
-      dn: ou=People\,dc=${join("\\,dc=", split(".", "${var.iam_namespace}.${var.host}"))}
-      objectClass: organizationalUnit
-      ou: People
-      dn: ou=Group\,dc=${join("\\,dc=", split(".", "${var.iam_namespace}.${var.host}"))}
-      objectClass: organizationalUnit
-      ou: Group
-    EOT
-  }
-  set_sensitive {
-    name  = "global.adminPassword"
-    value = var.openldap_admin_password
-  }
-  set_sensitive {
-    name  = "global.configPassword"
-    value = var.openldap_config_password
-  }
-  set_sensitive {
-    name  = "env.LDAP_READONLY_USER_PASSWORD"
-    value = var.openldap_readonly_password
-  }
-  depends_on = [
-    digitalocean_kubernetes_cluster.cluster,
-    helm_release.cert_issuer
-  ]
-}
-
-# https://github.com/codecentric/helm-charts/tree/keycloak-18.4.4/charts/keycloak
-resource "helm_release" "keycloak" {
-  name             = "keycloak"
-  chart            = "keycloak"
-  repository       = "https://codecentric.github.io/helm-charts"
-  version          = "18.4.4"
-  namespace        = var.iam_namespace
-  create_namespace = true
-  lint             = true
-  timeout          = 600
-  values           = [
-    "${file("../charts/keycloak/values.yaml")}"
-  ]
-  set {
-    name  = "ingress.rules[0].host"
-    value = "${var.iam_namespace}.${var.host}"
-  }
-  set {
-    name  = "ingress.tls[0].hosts"
-    value = "{${var.iam_namespace}.${var.host}}"
-  }
-  set_sensitive {
-    name  = "postgresql.postgresqlPassword"
-    value = var.keycloak_postgresql_password
-  }
-  set {
-    name  = "ingress.annotations.cert-manager\\.io/cluster-issuer"
-    value = "letsencrypt-${var.lets_encrypt_environment}"
-  }
-  set {
-    name  = "ingress.tls[0].secretName"
-    value = "letsencrypt-${var.lets_encrypt_environment}"
-  }
-  depends_on = [
-    digitalocean_kubernetes_cluster.cluster,
-    helm_release.cert_issuer
-  ]
-}
-
 # https://github.com/bitnami/charts/tree/5687b241a2daa04df4b38f8e4d7dd110c64f5c7c/bitnami/clickhouse
 resource "helm_release" "clickhouse" {
   name             = "clickhouse"
@@ -205,6 +116,14 @@ resource "helm_release" "airflow" {
   set {
     name  = "ingress.web.hosts[0].tls.secretName"
     value = "letsencrypt-${var.lets_encrypt_environment}"
+  }
+  set_sensitive {
+    name  = "config.github_enterprise.client_id"
+    value = var.github_oauth_client_id_airflow
+  }
+  set_sensitive {
+    name  = "config.github_enterprise.client_secret"
+    value = var.github_oauth_client_secret_airflow
   }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,
