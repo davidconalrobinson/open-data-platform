@@ -11,4 +11,5 @@ controller:
   service:
     annotations:
       service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: true
-      service.beta.kubernetes.io/do-loadbalancer-name: ingress-nginx-load-balancer
+      service.beta.kubernetes.io/do-loadbalancer-name: |
+        ingress-nginx-load-balancer

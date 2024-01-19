@@ -34,7 +34,7 @@ singleuser:
                 app.kubernetes.io/name: clickhouse
 ingress:
   enabled: true
-  annotations: 
+  annotations:
     cert-manager.io/issuer: |
       "<this value is overriden by terraform/helm_releases.tf>"
   ingressClassName: nginx
