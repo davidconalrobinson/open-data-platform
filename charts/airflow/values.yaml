@@ -1,3 +1,4 @@
+---
 # Default values for airflow.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -8,7 +9,8 @@ ingress:
   web:
     enabled: true
     annotations:
-      cert-manager.io/cluster-issuer: "<this value is overriden by terraform/helm_releases.tf>"
+      cert-manager.io/cluster-issuer: |
+        "<this value is overriden by terraform/helm_releases.tf>"
       kubernetes.io/ingress.class: "nginx"
     path: "/airflow"
     pathType: "Prefix"
@@ -38,7 +40,7 @@ webserver:
 
     AUTH_TYPE = AUTH_OAUTH
     AUTH_ROLES_SYNC_AT_LOGIN = True  # Checks roles on every login
-    AUTH_USER_REGISTRATION = True  # allow users who are not already in the FAB DB to register
+    AUTH_USER_REGISTRATION = True
     AUTH_ROLES_MAPPING = {
         "Viewer": ["Viewer"],
         "Admin": ["Admin"],
@@ -66,7 +68,10 @@ webserver:
             remote_app = self.appbuilder.sm.oauth_remotes[provider]
             me = remote_app.get("user")
             user_data = me.json()
-            return {"username": "github_" + user_data.get("login"), "role_keys": ["Admin"]}
+            return {
+              "username": user_data.get("login"),
+              "role_keys": ["Admin"]
+            }
 
 
     SECURITY_MANAGER_CLASS = GithubAuthoriser
