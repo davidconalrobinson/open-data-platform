@@ -1,3 +1,4 @@
+---
 # Default values for metabase.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -26,7 +27,7 @@ extraVolumeMounts:
     readOnly: false
 extraVolumes:
   - name: plugins
-    emptyDir: {}
+    emptyDir: { }
 livenessProbe:
   initialDelaySeconds: 200
 readinessProbe:
@@ -40,7 +41,8 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    cert-manager.io/cluster-issuer: <this value is overriden by terraform/helm_releases.tf>
+    cert-manager.io/cluster-issuer: |
+      <this value is overriden by terraform/helm_releases.tf>
     kubernetes.io/ingress.class: "nginx"
   tls:
     - secretName: <this value is overriden by terraform/helm_releases.tf>
