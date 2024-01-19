@@ -1,6 +1,6 @@
 # Open Data Platform
 
-[![Super-Linter](https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/<WORKFLOW_FILE_NAME>/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![Super-Linter](https://github.com/davidconalrobinson/open-data-platform/actions/workflows/super_linter/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
 ## Quick start
 
