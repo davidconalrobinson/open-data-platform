@@ -6,18 +6,22 @@
 # https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/3.2.1/jupyterhub/values.yaml
 hub:
   baseUrl: /jupyterhub
-  image:
-    tag: "3.2.1"
+  config:
+    JupyterHub:
+      authenticator_class: github
+    OAuthenticator:
+      oauth_callback_url: "<this value is overriden by terraform/helm_releases.tf>"
+      client_id: "<this value is overriden by terraform/helm_releases.tf>"
+      client_secret: "<this value is overriden by terraform/helm_releases.tf>"
+    GitHubOAuthenticator:
+      allow_all: true
+      scope:
+        - "user:email"
+        - "read:org"
 proxy:
   service:
     type: ClusterIP
-  secretSync:
-    image:
-      tag: "3.2.1"
 singleuser:
-  networkTools:
-    image:
-      tag: "3.2.1"
   networkPolicy:
     egress:
       - to:
@@ -28,9 +32,6 @@ singleuser:
               app.kubernetes.io/name: clickhouse
     egressAllowRules:
       privateIPs: true
-  image:
-    name: quay.io/jupyterhub/k8s-singleuser-sample
-    tag: "3.2.1"
 ingress:
   enabled: true
   annotations: 

@@ -56,19 +56,13 @@ variable lets_encrypt_email {
   type        = string
 }
 
-variable iam_namespace {
-  description = "Namespace used for deploying identity & access management (IAM) resources"
-  type        = string
-  default     = "iam"
-}
-
-variable github_oauth_client_id_airflow {
-  description = "Client ID for github OAuth app used for airflow authentication"
+variable github_auth_app_client_id {
+  description = "Client ID for github app used for oauth"
   type        = string
 }
 
-variable github_oauth_client_secret_airflow {
-  description = "Client secret for github OAuth app used for airflow authentication"
+variable github_auth_app_client_secret {
+  description = "Client secret for github app used for oauth"
   type        = string
 }
 
