@@ -119,11 +119,11 @@ resource "helm_release" "airflow" {
   }
   set_sensitive {
     name  = "config.github_enterprise.client_id"
-    value = var.github_oauth_client_id_airflow
+    value = var.github_auth_app_client_id
   }
   set_sensitive {
     name  = "config.github_enterprise.client_secret"
-    value = var.github_oauth_client_secret_airflow
+    value = var.github_auth_app_client_secret
   }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,
@@ -194,6 +194,18 @@ resource "helm_release" "jupyterhub" {
   set {
     name  = "ingress.tls[0].secretName"
     value = "letsencrypt-${var.lets_encrypt_environment}"
+  }
+  set {
+    name  = "hub.config.OAuthenticator.oauth_callback_url"
+    value = "https://${var.platform_namespace}.${var.host}/jupyterhub/hub/oauth_callback"
+  }
+  set_sensitive {
+    name  = "hub.config.OAuthenticator.client_id"
+    value = var.github_auth_app_client_id
+  }
+  set_sensitive {
+    name  = "hub.config.OAuthenticator.client_secret"
+    value = var.github_auth_app_client_secret
   }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,
