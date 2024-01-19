@@ -9,7 +9,7 @@ resource "helm_release" "ingress_nginx" {
   lint             = true
   timeout          = 600
   values           = [
-    "${file("../charts/ingress-nginx/values.yaml")}"
+    file("../charts/ingress-nginx/values.yaml")
   ]
   set {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/do-loadbalancer-hostname"
@@ -31,7 +31,7 @@ resource "helm_release" "cert_manager" {
   lint             = true
   timeout          = 600
   values           = [
-    "${file("../charts/cert-manager/values.yaml")}"
+    file("../charts/cert-manager/values.yaml")
   ]
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,
@@ -48,7 +48,7 @@ resource "helm_release" "cert_issuer" {
   lint             = true
   timeout          = 600
   values           = [
-    "${file("../charts/cert-issuer/values.yaml")}"
+    file("../charts/cert-issuer/values.yaml")
   ]
   set {
     name  = "letsencrypt_email"
@@ -71,7 +71,7 @@ resource "helm_release" "clickhouse" {
   lint             = true
   timeout          = 600
   values           = [
-    "${file("../charts/clickhouse/values.yaml")}"
+    file("../charts/clickhouse/values.yaml")
   ]
   set {
     name  = "auth.username"
@@ -99,7 +99,7 @@ resource "helm_release" "airflow" {
   timeout          = 600
   wait             = false
   values           = [
-    "${file("../charts/airflow/values.yaml")}"
+    file("../charts/airflow/values.yaml")
   ]
   set {
     name  = "ingress.web.hosts[0].name"
@@ -142,7 +142,7 @@ resource "helm_release" "metabase" {
   lint             = true
   timeout          = 600
   values           = [
-    "${file("../charts/metabase/values.yaml")}"
+    file("../charts/metabase/values.yaml")
   ]
   set {
     name  = "siteUrl"
@@ -181,7 +181,7 @@ resource "helm_release" "jupyterhub" {
   lint             = true
   timeout          = 600
   values           = [
-    "${file("../charts/jupyterhub/values.yaml")}"
+    file("../charts/jupyterhub/values.yaml")
   ]
   set {
     name  = "ingress.hosts"
