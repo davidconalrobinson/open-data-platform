@@ -117,7 +117,7 @@ resource "helm_release" "airflow" {
     name  = "ingress.web.hosts[0].tls.secretName"
     value = "letsencrypt-${var.lets_encrypt_environment}"
   }
-  set_sensitive {
+  set {
     name  = "config.github_enterprise.client_id"
     value = var.airflow_github_auth_app_client_id
   }
@@ -164,7 +164,7 @@ resource "helm_release" "superset" {
     name  = "ingress.tls[0].hosts"
     value = "{superset.${var.platform_namespace}.${var.host}}"
   }
-  set_sensitive {
+  set {
     name  = "extraSecretEnv.GITHUB_AUTH_APP_CLIENT_ID"
     value = var.superset_github_auth_app_client_id
   }
@@ -207,7 +207,7 @@ resource "helm_release" "jupyterhub" {
     name  = "hub.config.OAuthenticator.oauth_callback_url"
     value = "https://jupyterhub.${var.platform_namespace}.${var.host}/hub/oauth_callback"
   }
-  set_sensitive {
+  set {
     name  = "hub.config.OAuthenticator.client_id"
     value = var.jupyterhub_github_auth_app_client_id
   }
