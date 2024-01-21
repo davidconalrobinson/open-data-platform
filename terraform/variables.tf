@@ -64,6 +64,7 @@ variable airflow_github_auth_app_client_id {
 variable airflow_github_auth_app_client_secret {
   description = "Client secret for github app used for airflow oauth"
   type        = string
+  sensitive   = true
 }
 
 variable jupyterhub_github_auth_app_client_id {
@@ -74,6 +75,7 @@ variable jupyterhub_github_auth_app_client_id {
 variable jupyterhub_github_auth_app_client_secret {
   description = "Client secret for github app used for jupyterhub oauth"
   type        = string
+  sensitive   = true
 }
 
 variable superset_github_auth_app_client_id {
@@ -84,6 +86,7 @@ variable superset_github_auth_app_client_id {
 variable superset_github_auth_app_client_secret {
   description = "Client secret for github app used for superset oauth"
   type        = string
+  sensitive   = true
 }
 
 variable platform_namespace {
