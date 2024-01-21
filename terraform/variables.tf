@@ -116,3 +116,13 @@ variable superset_secret_key {
   type        = string
   sensitive   = true
 }
+variable rbac {
+  description = "Map of users and their corresponding rbac role"
+  type        = map(
+    object(
+      {
+        platform_role = string
+      }
+    )
+  )
+}
