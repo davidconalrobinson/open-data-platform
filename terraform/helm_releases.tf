@@ -103,11 +103,11 @@ resource "helm_release" "airflow" {
   ]
   set {
     name  = "ingress.web.hosts[0].name"
-    value = "${var.platform_namespace}.${var.host}"
+    value = "airflow.${var.platform_namespace}.${var.host}"
   }
   set {
     name  = "config.webserver.base_url"
-    value = "https://${var.platform_namespace}.${var.host}/airflow"
+    value = "https://airflow.${var.platform_namespace}.${var.host}"
   }
   set {
     name  = "ingress.web.annotations.cert-manager\\.io/cluster-issuer"
@@ -119,11 +119,11 @@ resource "helm_release" "airflow" {
   }
   set_sensitive {
     name  = "config.github_enterprise.client_id"
-    value = var.github_auth_app_client_id
+    value = var.airflow_github_auth_app_client_id
   }
   set_sensitive {
     name  = "config.github_enterprise.client_secret"
-    value = var.github_auth_app_client_secret
+    value = var.airflow_github_auth_app_client_secret
   }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,
@@ -131,30 +131,26 @@ resource "helm_release" "airflow" {
   ]
 }
 
-# https://github.com/pmint93/helm-charts/tree/metabase-2.10.4
-resource "helm_release" "metabase" {
-  name             = "metabase"
-  chart            = "metabase"
-  repository       = "https://pmint93.github.io/helm-charts"
-  version          = "2.10.4"
+# https://github.com/apache/superset/blob/superset-helm-chart-0.11.2/helm/superset
+resource "helm_release" "superset" {
+  name             = "superset"
+  chart            = "superset"
+  repository       = "https://apache.github.io/superset"
+  version          = "0.11.2"
   namespace        = var.platform_namespace
   create_namespace = true
   lint             = true
-  timeout          = 600
+  timeout          = 120
   values           = [
-    file("../charts/metabase/values.yaml")
+    file("../charts/superset/values.yaml")
   ]
-  set {
-    name  = "siteUrl"
-    value = "https://${var.platform_namespace}.${var.host}"
+  set_sensitive {
+    name  = "extraSecretEnv.SUPERSET_SECRET_KEY"
+    value = var.superset_secret_key
   }
   set {
     name  = "ingress.hosts"
-    value = "{${var.platform_namespace}.${var.host}}"
-  }
-  set {
-    name  = "ingress.tls[0].hosts"
-    value = "{${var.platform_namespace}.${var.host}}"
+    value = "{superset.${var.platform_namespace}.${var.host}}"
   }
   set {
     name  = "ingress.annotations.cert-manager\\.io/cluster-issuer"
@@ -163,6 +159,18 @@ resource "helm_release" "metabase" {
   set {
     name  = "ingress.tls[0].secretName"
     value = "letsencrypt-${var.lets_encrypt_environment}"
+  }
+  set {
+    name  = "ingress.tls[0].hosts"
+    value = "{superset.${var.platform_namespace}.${var.host}}"
+  }
+  set_sensitive {
+    name  = "extraSecretEnv.GITHUB_AUTH_APP_CLIENT_ID"
+    value = var.superset_github_auth_app_client_id
+  }
+  set_sensitive {
+    name  = "extraSecretEnv.GITHUB_AUTH_APP_CLIENT_SECRET"
+    value = var.superset_github_auth_app_client_secret
   }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,
@@ -185,7 +193,7 @@ resource "helm_release" "jupyterhub" {
   ]
   set {
     name  = "ingress.hosts"
-    value = "{${var.platform_namespace}.${var.host}}"
+    value = "{jupyterhub.${var.platform_namespace}.${var.host}}"
   }
   set {
     name  = "ingress.annotations.cert-manager\\.io/cluster-issuer"
@@ -197,15 +205,15 @@ resource "helm_release" "jupyterhub" {
   }
   set {
     name  = "hub.config.OAuthenticator.oauth_callback_url"
-    value = "https://${var.platform_namespace}.${var.host}/jupyterhub/hub/oauth_callback"
+    value = "https://jupyterhub.${var.platform_namespace}.${var.host}/hub/oauth_callback"
   }
   set_sensitive {
     name  = "hub.config.OAuthenticator.client_id"
-    value = var.github_auth_app_client_id
+    value = var.jupyterhub_github_auth_app_client_id
   }
   set_sensitive {
     name  = "hub.config.OAuthenticator.client_secret"
-    value = var.github_auth_app_client_secret
+    value = var.jupyterhub_github_auth_app_client_secret
   }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,

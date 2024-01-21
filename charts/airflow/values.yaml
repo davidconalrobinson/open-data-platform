@@ -9,10 +9,8 @@ ingress:
   web:
     enabled: true
     annotations:
-      cert-manager.io/cluster-issuer: |
-        "<this value is overriden by terraform/helm_releases.tf>"
+      cert-manager.io/cluster-issuer: "<this value is overriden by terraform/helm_releases.tf>"
       kubernetes.io/ingress.class: "nginx"
-    path: "/airflow"
     pathType: "Prefix"
     hosts:
       - tls:

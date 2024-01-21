@@ -16,14 +16,15 @@ lets_encrypt_email = "email@my.domain"
 lets_encrypt_environment = "staging"
 
 # IAM vars
-iam_namespace = "iam"
-keycloak_admin_password = "password"
-keycloak_postgresql_password = "password"
-openldap_admin_password = "password"
-openldap_config_password = "password"
-openldap_readonly_password = "password"
+airflow_github_auth_app_client_id = "client_id"
+airflow_github_auth_app_client_secret = "client_secret"
+jupyterhub_github_auth_app_client_id = "client_id"
+jupyterhub_github_auth_app_client_secret = "client_secret"
+superset_github_auth_app_client_id = "client_id"
+superset_github_auth_app_client_secret = "client_secret"
 
 # Data platform vars
 platform_namespace = "default"
 clickhouse_username = "default"
 clickhouse_password = "password"
+superset_secret_key = "password"
