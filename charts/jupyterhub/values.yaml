@@ -14,9 +14,8 @@ hub:
       client_id: "<this value is overriden by terraform/helm_releases.tf>"
       client_secret: "<this value is overriden by terraform/helm_releases.tf>"
     GitHubOAuthenticator:
-      allow_all: true
       scope:
-        - "user:email"
+        - "read:user"
         - "read:org"
 proxy:
   service:

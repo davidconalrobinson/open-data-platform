@@ -125,6 +125,13 @@ resource "helm_release" "airflow" {
     name  = "config.github_enterprise.client_secret"
     value = var.airflow_github_auth_app_client_secret
   }
+  set {
+    name  = "extraEnv"
+    value = <<-EOT
+      - name: 'RBAC'
+        value: '${replace(jsonencode(var.rbac), ",", "\\,")}'
+    EOT
+  }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,
     helm_release.cert_issuer
@@ -140,7 +147,7 @@ resource "helm_release" "superset" {
   namespace        = var.platform_namespace
   create_namespace = true
   lint             = true
-  timeout          = 120
+  timeout          = 600
   values           = [
     file("../charts/superset/values.yaml")
   ]
@@ -171,6 +178,22 @@ resource "helm_release" "superset" {
   set_sensitive {
     name  = "extraSecretEnv.GITHUB_AUTH_APP_CLIENT_SECRET"
     value = var.superset_github_auth_app_client_secret
+  }
+  set {
+    name  = "extraEnv.RBAC"
+    value = replace(
+      replace(
+        replace(
+          jsonencode(var.rbac),
+          ",",
+          "\\,"
+        ),
+        "{",
+        "\\{"
+      ),
+      "}",
+      "\\}"
+    )
   }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,
@@ -214,6 +237,20 @@ resource "helm_release" "jupyterhub" {
   set_sensitive {
     name  = "hub.config.OAuthenticator.client_secret"
     value = var.jupyterhub_github_auth_app_client_secret
+  }
+  dynamic set_list {
+    for_each = length([for k, v in var.rbac : k if contains(["admin"], v.platform_role)]) > 0 ? ["enabled"] : []
+    content {
+      name  = "hub.config.GitHubOAuthenticator.admin_users"
+      value = [for k, v in var.rbac : k if contains(["admin"], v.platform_role)]
+    }
+  }
+  dynamic set_list {
+    for_each = length([for k, v in var.rbac : k if contains(["admin", "engineer", "scientist"], v.platform_role)]) > 0 ? ["enabled"] : []
+    content {
+      name  = "hub.config.GitHubOAuthenticator.allowed_users"
+      value = [for k, v in var.rbac : k if contains(["admin", "engineer", "scientist"], v.platform_role)]
+    }
   }
   depends_on = [
     digitalocean_kubernetes_cluster.cluster,

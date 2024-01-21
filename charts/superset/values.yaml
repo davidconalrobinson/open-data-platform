@@ -16,10 +16,24 @@ extraSecretEnv:
 configOverrides:
   enable_oauth: |
     import os
+    import json
+    import logging
     from flask_appbuilder.security.manager import (AUTH_DB, AUTH_OAUTH)
+    from superset.security import SupersetSecurityManager
 
     ENABLE_PROXY_FIX = True
     AUTH_TYPE = AUTH_OAUTH
+    AUTH_ROLES_SYNC_AT_LOGIN = True   # Sync roles on every login
+    AUTH_USER_REGISTRATION = True     # Allow users to self register
+    AUTH_USER_REGISTRATION_ROLE = "Public"  # Default role for self-registered users
+    AUTH_ROLES_MAPPING = {
+        "admin": ["Admin"],
+        "engineer": ["Alpha", "sql_lab"],
+        "scientist": ["Gamma", "sql_lab"],
+        "analyst": ["Gamma", "sql_lab"],
+        "viewer": ["Gamma"]
+    }
+    RBAC = json.loads(os.environ.get("RBAC"))
     OAUTH_PROVIDERS = [
         {
             "name": "github",
@@ -37,14 +51,26 @@ configOverrides:
             },
         },
     ]
-    # Map Authlib roles to superset roles
-    AUTH_ROLE_ADMIN = 'Admin'
-    AUTH_ROLE_PUBLIC = 'Public'
-    # Will allow user self registration, allowing to create Flask users from Authorized User
-    AUTH_USER_REGISTRATION = True
-    # The default user self registration role
-    AUTH_USER_REGISTRATION_ROLE = "Admin"
-    AUTH_ROLES_SYNC_AT_LOGIN = True  # Checks roles on every login
+
+
+    class GithubAuthoriser(SupersetSecurityManager):
+        def oauth_user_info(self, provider, resp):
+            remote_app = self.appbuilder.sm.oauth_remotes[provider]
+            me = remote_app.get("user")
+            user_data = me.json()
+            username = user_data.get("login")
+            try:
+              role_keys = [RBAC[username]["platform_role"]]
+            except KeyError as e:
+              logging.error(f"Permission denied to user {username}")
+              raise Exception(e)
+            return {
+              "username": user_data.get("login"),
+              "role_keys": role_keys
+            }
+
+
+    CUSTOM_SECURITY_MANAGER = GithubAuthoriser
 ingress:
   enabled: true
   ingressClassName: nginx

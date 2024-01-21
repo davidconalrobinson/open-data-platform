@@ -28,3 +28,8 @@ platform_namespace = "default"
 clickhouse_username = "default"
 clickhouse_password = "password"
 superset_secret_key = "password"
+rbac = {
+    "<github username 1>" = {
+        platform_role = "< admin | engineer | scientist | analyst | viewer >"
+    }
+}
