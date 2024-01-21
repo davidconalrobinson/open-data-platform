@@ -1,0 +1,59 @@
+---
+# Default values for superset.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#
+# For a complete list of parameters that can be set from this file refer to:
+# https://github.com/apache/superset/blob/superset-helm-chart-0.11.2/helm/superset/values.yaml
+bootstrapScript: |
+  #!/bin/bash
+  if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
+  pip3 install authlib==1.3.0
+extraSecretEnv:
+  SUPERSET_SECRET_KEY: "<this value is overriden by terraform/helm_releases.tf>"
+  GITHUB_AUTH_APP_CLIENT_ID: "<this value is overriden by terraform/helm_releases.tf>"
+  GITHUB_AUTH_APP_CLIENT_SECRET: "<this value is overriden by terraform/helm_releases.tf>"
+configOverrides:
+  enable_oauth: |
+    import os
+    from flask_appbuilder.security.manager import (AUTH_DB, AUTH_OAUTH)
+
+    ENABLE_PROXY_FIX = True
+    AUTH_TYPE = AUTH_OAUTH
+    OAUTH_PROVIDERS = [
+        {
+            "name": "github",
+            "icon": "fa-github",
+            "token_key": "access_token",
+            "remote_app": {
+                "client_id": os.environ.get("GITHUB_AUTH_APP_CLIENT_ID"),
+                "client_secret": os.environ.get("GITHUB_AUTH_APP_CLIENT_SECRET"),
+                "api_base_url": "https://api.github.com",
+                "client_kwargs": {"scope": "read:user, read:org"},
+                "access_token_url":
+                  "https://github.com/login/oauth/access_token",
+                "authorize_url": "https://github.com/login/oauth/authorize",
+                "request_token_url": None,
+            },
+        },
+    ]
+    # Map Authlib roles to superset roles
+    AUTH_ROLE_ADMIN = 'Admin'
+    AUTH_ROLE_PUBLIC = 'Public'
+    # Will allow user self registration, allowing to create Flask users from Authorized User
+    AUTH_USER_REGISTRATION = True
+    # The default user self registration role
+    AUTH_USER_REGISTRATION_ROLE = "Admin"
+    AUTH_ROLES_SYNC_AT_LOGIN = True  # Checks roles on every login
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "<this value is overriden by terraform/helm_releases.tf>"
+    kubernetes.io/ingress.class: "nginx"
+  hosts:
+    - "<this value is overriden by terraform/helm_releases.tf>"
+  tls:
+    - secretName: "<this value is overriden by terraform/helm_releases.tf>"
+      hosts:
+        - "<this value is overriden by terraform/helm_releases.tf>"

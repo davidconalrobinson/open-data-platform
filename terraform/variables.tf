@@ -56,14 +56,37 @@ variable lets_encrypt_email {
   type        = string
 }
 
-variable github_auth_app_client_id {
-  description = "Client ID for github app used for oauth"
+variable airflow_github_auth_app_client_id {
+  description = "Client ID for github app used for airflow oauth"
   type        = string
 }
 
-variable github_auth_app_client_secret {
-  description = "Client secret for github app used for oauth"
+variable airflow_github_auth_app_client_secret {
+  description = "Client secret for github app used for airflow oauth"
   type        = string
+  sensitive   = true
+}
+
+variable jupyterhub_github_auth_app_client_id {
+  description = "Client ID for github app used for jupyterhub oauth"
+  type        = string
+}
+
+variable jupyterhub_github_auth_app_client_secret {
+  description = "Client secret for github app used for jupyterhub oauth"
+  type        = string
+  sensitive   = true
+}
+
+variable superset_github_auth_app_client_id {
+  description = "Client ID for github app used for superset oauth"
+  type        = string
+}
+
+variable superset_github_auth_app_client_secret {
+  description = "Client secret for github app used for superset oauth"
+  type        = string
+  sensitive   = true
 }
 
 variable platform_namespace {
@@ -84,6 +107,12 @@ variable clickhouse_username {
 
 variable clickhouse_password {
   description = "Clickhouse password"
+  type        = string
+  sensitive   = true
+}
+
+variable superset_secret_key {
+  description = "Superset secret key"
   type        = string
   sensitive   = true
 }
