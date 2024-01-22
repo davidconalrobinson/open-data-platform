@@ -15,9 +15,6 @@ resource "helm_release" "ingress_nginx" {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/do-loadbalancer-hostname"
     value = "${var.ingress_namespace}.${var.host}"
   }
-  depends_on = [
-    digitalocean_kubernetes_cluster.cluster
-  ]
 }
 
 # https://github.com/cert-manager/cert-manager/tree/v1.13.3/deploy/charts/cert-manager
@@ -34,7 +31,6 @@ resource "helm_release" "cert_manager" {
     file("../charts/cert-manager/values.yaml")
   ]
   depends_on = [
-    digitalocean_kubernetes_cluster.cluster,
     helm_release.ingress_nginx
   ]
 }
@@ -55,9 +51,7 @@ resource "helm_release" "cert_issuer" {
     value = var.lets_encrypt_email
   }
   depends_on = [
-    digitalocean_kubernetes_cluster.cluster,
-    helm_release.cert_manager,
-    digitalocean_record.dns_record
+    helm_release.cert_manager
   ]
 }
 
@@ -82,7 +76,6 @@ resource "helm_release" "clickhouse" {
     value = var.clickhouse_password
   }
   depends_on = [
-    digitalocean_kubernetes_cluster.cluster,
     helm_release.cert_issuer
   ]
 }
@@ -133,8 +126,8 @@ resource "helm_release" "airflow" {
     EOT
   }
   depends_on = [
-    digitalocean_kubernetes_cluster.cluster,
-    helm_release.cert_issuer
+    helm_release.cert_issuer,
+    helm_release.clickhouse
   ]
 }
 
@@ -196,8 +189,8 @@ resource "helm_release" "superset" {
     )
   }
   depends_on = [
-    digitalocean_kubernetes_cluster.cluster,
-    helm_release.cert_issuer
+    helm_release.cert_issuer,
+    helm_release.clickhouse
   ]
 }
 
@@ -253,7 +246,46 @@ resource "helm_release" "jupyterhub" {
     }
   }
   depends_on = [
-    digitalocean_kubernetes_cluster.cluster,
-    helm_release.cert_issuer
+    helm_release.cert_issuer,
+    helm_release.clickhouse
   ]
 }
+
+# # https://github.com/open-metadata/openmetadata-helm-charts/tree/openmetadata-1.2.7/charts/deps
+# resource "helm_release" "open_metadata_dependencies" {
+#   name             = "open-metadata-dependencies"
+#   chart            = "openmetadata-dependencies"
+#   repository       = "https://helm.open-metadata.org"
+#   version          = "1.2.7"
+#   namespace        = var.platform_namespace
+#   create_namespace = true
+#   lint             = true
+#   timeout          = 600
+#   values           = [
+#     file("../charts/open-metadata-dependencies/values.yaml")
+#   ]
+#   depends_on = [
+#     helm_release.cert_issuer,
+#     helm_release.clickhouse
+#   ]
+# }
+
+# # https://github.com/open-metadata/openmetadata-helm-charts/tree/openmetadata-1.2.7/charts/openmetadata
+# resource "helm_release" "open_metadata" {
+#   name             = "open-metadata"
+#   chart            = "openmetadata"
+#   repository       = "https://helm.open-metadata.org"
+#   version          = "1.2.7"
+#   namespace        = var.platform_namespace
+#   create_namespace = true
+#   lint             = true
+#   timeout          = 600
+#   values           = [
+#     file("../charts/open-metadata/values.yaml")
+#   ]
+#   depends_on = [
+#     helm_release.cert_issuer,
+#     helm_release.open_metadata_dependencies,
+#     helm_release.clickhouse
+#   ]
+# }

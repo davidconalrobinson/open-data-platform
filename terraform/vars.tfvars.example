@@ -1,35 +1,24 @@
-# DigitalOcean
-digital_ocean_token = "digital-ocean-api-token"
-
-# Cluster
-cluster_name = "data-platform-cluster"
-cluster_region = "ams3"
-cluster_version = "1.28.2-do.0"
-node_size = "s-4vcpu-8gb"
-min_nodes = 1
-max_nodes = 3
-
-# Ingress vars
-ingress_namespace = "ingress"
-host = "my.domain"
-lets_encrypt_email = "email@my.domain"
-lets_encrypt_environment = "staging"
-
-# IAM vars
-airflow_github_auth_app_client_id = "client_id"
-airflow_github_auth_app_client_secret = "client_secret"
-jupyterhub_github_auth_app_client_id = "client_id"
+# Required vars
+host                                     = "my.domain"
+lets_encrypt_email                       = "email@my.domain"
+airflow_github_auth_app_client_id        = "client_id"
+airflow_github_auth_app_client_secret    = "client_secret"
+jupyterhub_github_auth_app_client_id     = "client_id"
 jupyterhub_github_auth_app_client_secret = "client_secret"
-superset_github_auth_app_client_id = "client_id"
-superset_github_auth_app_client_secret = "client_secret"
-
-# Data platform vars
-platform_namespace = "default"
-clickhouse_username = "default"
-clickhouse_password = "password"
-superset_secret_key = "password"
-rbac = {
+superset_github_auth_app_client_id       = "client_id"
+superset_github_auth_app_client_secret   = "client_secret"
+clickhouse_username                      = "default"
+clickhouse_password                      = "password"
+superset_secret_key                      = "password"
+rbac                                     = {
     "<github username 1>" = {
         platform_role = "< admin | engineer | scientist | analyst | viewer >"
     }
 }
+
+# Optional vars
+kube_config_path         = "~/.kube/config"
+kube_config_context      = "default"
+ingress_namespace        = "ingress"
+lets_encrypt_environment = "staging"
+platform_namespace       = "default"
