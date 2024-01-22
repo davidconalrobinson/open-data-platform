@@ -7,11 +7,14 @@
 # https://github.com/bitnami/charts/blob/5687b241a2daa04df4b38f8e4d7dd110c64f5c7c/bitnami/clickhouse/values.yaml
 resources:
   requests:
-    memory: "2Gi"
-    cpu: "1"
+    memory: "1Gi"
+    cpu: "0.5"
   limits:
-    memory: "4Gi"
-    cpu: "2"
+    memory: "1.5Gi"
+    cpu: "0.75"
+replicaCount: 1
+zookeeper:
+  replicaCount: 1
 auth:
   username: "<this value is overriden by terraform/helm_releases.tf>"
   password: "<this value is overriden by terraform/helm_releases.tf>"

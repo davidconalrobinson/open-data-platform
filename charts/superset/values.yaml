@@ -8,7 +8,7 @@
 bootstrapScript: |
   #!/bin/bash
   if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
-  pip3 install authlib==1.3.0
+  pip3 install authlib==1.3.0 clickhouse-connect>=0.6.8
 extraSecretEnv:
   SUPERSET_SECRET_KEY: "<this value is overriden by terraform/helm_releases.tf>"
   GITHUB_AUTH_APP_CLIENT_ID: "<this value is overriden by terraform/helm_releases.tf>"
