@@ -78,9 +78,10 @@ To deploy open-mds you will first need:
 
 ### Deploying using terraform
 
-- Create a `vars.tfvars` file in the `terraform/` directory and populate it with the variables required by the `open_mds` terraform module. There is an example file in `terraform/vars.tfvars.example` that you can use as a template. Refer to `terraform/open_mds/variables.tf` for variables descriptions and types. Note that:
-    - For deploying to a local kubernetes cluster you can set the `host` to `http://localhost:8000`. Otherwise this should the `host` where you intend to make your open-mds deployment accessible from outside your cluster (i.e.: `my.domain.com`).
+- Create a `vars.tfvars` file in the `terraform/` directory and populate it with the variables required by the `open_mds` terraform module. There is an example file in `terraform/vars.tfvars.example` that you can use as a template. Refer to `terraform/open_mds/variables.tf` for variable descriptions and types. Note that:
+    - For deploying to a local kubernetes cluster you can set the `host` to `http://localhost:8000`. Otherwise this should be the `host` where you intend to make your open-mds deployment accessible from outside your cluster (i.e.: `my.domain.com`).
     - open-mds uses GitHub apps as OAuth clients for authorising access. In order to be authorised you will need to add your GitHub username under the `RBAC` map.
+    - This implementation uses [letsencrypt](https://letsencrypt.org/) for certificate signing. Letsencrypt has very strict rate limits in production, so for testing/development it is best to set `lets_encrypt_environment` to `staging`.
 - Run the following commands to deploy open-mds on your cluster:
   ```
   cd terraform
@@ -107,7 +108,7 @@ To deploy open-mds you will first need:
       ```
       kubectl port-forward svc/hub -n <platform_namespace specified in vars.tfvars file> 8000:8081
       ```
-- Open a browser and go to `http://localhost:8000`. Your browser will probably warn you that the site's certificate cannot be trusted. You can ignore this warning for now because we still have not configured a host and DNS records (we'll do this below in XXX).
+- Open a browser and go to `http://localhost:8000`. Your browser will probably warn you that the site's certificate cannot be trusted. You can ignore this warning for now because we still have not configured a host and DNS records.
 - Click to login using GitHub. You will be prompted to authorise access, and then you will be redirected to the homepage of the service. At this point you should have access and everything should be working as expected.
 
 ### Accessing open-mds from a remote cluster deployment
@@ -157,5 +158,3 @@ https://forum.astronomer.io/t/run-airflow-migration-and-wait-for-airflow-migrati
 - Airflow GitHub OAuth https://airflow.apache.org/docs/apache-airflow/stable/security/webserver.html
 - JupyterHub GitHub OAuth https://oauthenticator.readthedocs.io/en/latest/tutorials/provider-specific-setup/providers/github.html#
 - Superset GitHub OAuth https://stackoverflow.com/questions/71748176/using-github-oauth-for-superset
-
-## Future enhancements
