@@ -97,3 +97,21 @@ variable platform_namespace {
   type        = string
   default     = "default"
 }
+
+variable airflow_dag_sync_repo {
+  description = "Airflow DAG git sync repo"
+  type        = string
+  default     = "https://github.com/davidconalrobinson/open-mds.git"
+}
+
+variable airflow_dag_sync_branch {
+  description = "Airflow DAG git sync branch"
+  type        = string
+  default     = "master"
+}
+
+variable airflow_dag_sync_subpath {
+  description = "Airflow DAG git sync subpath"
+  type        = string
+  default     = "examples/quick_start/dags"
+}

@@ -114,6 +114,18 @@ resource "helm_release" "airflow" {
     name  = "config.github_enterprise.client_id"
     value = var.airflow_github_auth_app_client_id
   }
+  set {
+    name  = "dags.gitSync.repo"
+    value = var.airflow_dag_sync_repo
+  }
+  set {
+    name  = "dags.gitSync.branch"
+    value = var.airflow_dag_sync_branch
+  }
+  set {
+    name  = "dags.gitSync.subPath"
+    value = var.airflow_dag_sync_subpath
+  }
   set_sensitive {
     name  = "config.github_enterprise.client_secret"
     value = var.airflow_github_auth_app_client_secret

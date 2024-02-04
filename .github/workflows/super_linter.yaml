@@ -30,3 +30,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_TERRAFORM_TFLINT: true
           VALIDATE_YAML: true
+          VALIDATE_PYTHON: true
