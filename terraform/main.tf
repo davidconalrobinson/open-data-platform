@@ -21,4 +21,7 @@ module "open_mds" {
   ingress_namespace        = var.ingress_namespace
   lets_encrypt_environment = var.lets_encrypt_environment
   platform_namespace       = var.platform_namespace
+  airflow_dag_sync_repo    = var.airflow_dag_sync_repo
+  airflow_dag_sync_branch  = var.airflow_dag_sync_branch
+  airflow_dag_sync_subpath = var.airflow_dag_sync_subpath
 }

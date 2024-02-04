@@ -87,3 +87,9 @@ webserver:
 
 
     SECURITY_MANAGER_CLASS = GithubAuthoriser
+dags:
+  gitSync:
+    enabled: true
+    repo: "<this value is overriden by terraform/helm_releases.tf>"
+    branch: "<this value is overriden by terraform/helm_releases.tf>"
+    subPath: "<this value is overriden by terraform/helm_releases.tf>"
